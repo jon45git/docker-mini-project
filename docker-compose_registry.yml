@@ -1,0 +1,42 @@
+version: '3.1'
+services:
+  registry-ui:
+    image: joxit/docker-registry-ui:latest
+    container_name: pozos_web_registry
+    depends_on:
+      - registry-server
+    ports:
+      - "8090:80"
+    environment:
+      - DELETE_IMAGES=true
+      - SHOW_CONTENT_DIGEST=true
+      - SHOW_CATALOG_NB_TAGS=true
+      - CATALOG_MIN_BRANCHES=1
+      - CATALOG_MAX_BRANCHES=1
+      - TAGLIST_PAGE_SIZE=100
+      - REGISTRY_SECURED=false
+      - CATALOG_ELEMENTS_LIMIT=1000
+      - NGINX_PROXY_PASS_URL=http://pozos_registry:5000
+      - REGISTRY_TITLE=eazytraining
+      - SINGLE_REGISTRY=true
+    networks:
+      - registry_network
+  registry-server:
+    image: registry:2
+    container_name: pozos_registry
+    ports:
+      - "5000:5000"
+    volumes:
+      - /root/auth:/auth
+    environment:
+     - "REGISTRY_AUTH=htpasswd"
+     - "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm"
+     - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+    command:
+      - /bin/sh
+      - -c
+      - 'apk add --no-cache apache2-utils && htpasswd -Bbn pozos_registry change_me > /auth/htpasswd && registry serve /etc/docker/registry/config.yml'
+    networks:
+      - registry_network
+networks:
+  registry_network:
