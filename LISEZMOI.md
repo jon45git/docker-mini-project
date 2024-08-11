@@ -90,6 +90,7 @@ vi Dockerfile
 docker build . -t pozos_student_list_api_img
 docker images
 ```
+![docker5](https://github.com/user-attachments/assets/4cede5be-660b-4c91-a1b7-fcf707be1895)
 
 3) Création d'un réseau de type pont pour permettre par la suite aux deux conteneurs de communiquer via le DNS
 
@@ -97,6 +98,8 @@ docker images
 docker network create pozos_student_list_network --driver=bridge
 docker network ls
 ```
+
+![docker6](https://github.com/user-attachments/assets/7ef416ac-f7fa-4984-9f90-d09467295c03)
 
 
 4) Lancez le conteneur en utilisant notre image
@@ -107,12 +110,14 @@ cd ..
 docker run -d --name=pozos_student_list_api --network=pozos_student_list_network pozos_student_list_api_img
 ```
 
+![docker1](https://github.com/user-attachments/assets/5d8beca6-09e7-488b-9080-1f5fb2d84ddb)
 
 
 Le conteneur "pozos_student_list_api" est bien démarré et il écoute sur le port 5000.
-En suivant les consignes, un volume persistent est créé afin d'y stocker le fichier *student_age.json*
+En suivant les consignes, un volume persistant est créé afin d'y stocker le fichier *student_age.json*
 
 
+![docker4](https://github.com/user-attachments/assets/0d2cdeea-e6a0-48b5-9a4b-1015a3e9e87a)
 
 
 
@@ -124,9 +129,13 @@ Via une boucle for, on récupère l'adresse IP du conteneur API dans la log afin
 for i in $(docker logs pozos_student_list_api |& grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}:5000\b" |& uniq); do curl -u toto:python -X GET http://$i/pozos/api/v1.0/get_student_ages; done
 ```
 
+![docker3](https://github.com/user-attachments/assets/5363153b-f3e7-42f1-887c-a1d17c30babc)
+
+
 L'utilisateur et le mot de passe, à savoir toto/python sont fournis dans la consigne. Mais on peut les retrouver dans le code source de l'API (*student_age.py*)
 
 
+![docker2](https://github.com/user-attachments/assets/d5282497-2ee6-4dcf-b691-7399197bc459)
 
 
 
@@ -173,10 +182,12 @@ for i in $(grep container_name ${PWD}/docker-compose.yml | grep api | cut -d: -f
 ```bash
 docker-compose up -d
 ```
+![docker7](https://github.com/user-attachments/assets/08921e4b-00ff-4f06-8b6a-f9152338444d)
 
 Les conteneurs API et web sont bien créés.
 
 
+![docker8](https://github.com/user-attachments/assets/d71d60fd-7e86-4604-9b16-e57f1daa15a3)
 
 
 
@@ -184,6 +195,7 @@ Les conteneurs API et web sont bien créés.
 En utilisant un navigateur web et en pointant sur l'IP et le port 80, nous arrivons à obtenir le visuel.
 
 
+![docker9](https://github.com/user-attachments/assets/8c741e86-f01f-4b43-b032-dd4bc620074d)
 
 
 ### Registre privé
@@ -206,9 +218,11 @@ Pour le conteneur du registre, on a définit un utilisateur avec mot de passe po
 ```bash
 docker-compose -f /root/POZOS/docker-compose_registry.yml up -d
 ```
+![docker10](https://github.com/user-attachments/assets/e5341009-43df-444f-8463-80943ad795cc)
 
 Via un navigateur web, on vérifie que nous obtenons bien un rendu sur le port 8090
 
+![docker11](https://github.com/user-attachments/assets/592893bb-03b4-45ce-8abf-93f049a1df9c)
 
 
 3) Pousser l'image dans notre registre privé
@@ -222,11 +236,19 @@ docker image ls
 docker image push localhost:5000/pozos_student_list_api_img:latest
 ```
 
+![docker12](https://github.com/user-attachments/assets/fd31c04e-f94d-4178-a199-d52f1f71c1eb)
 
 
 Enfin, dans le navigateur web on regarde sur le port 80 pour l'API si nous avons toujours un rendu.
 
 
+![docker9](https://github.com/user-attachments/assets/fbd8e3d3-ea3d-4065-aa10-4fd1d4d4c6a1)
 
 
 puis sur le port 8090 pour le registre et constater l'apparition de notre image dans le registre.
+
+![docker13](https://github.com/user-attachments/assets/895cd479-6e8d-4da0-baee-bacb59caab93)
+
+# Conclusion du projet Docker
+
+Les différents points vu en cours ont put être mis en oeuvre de manière cohérentes.
